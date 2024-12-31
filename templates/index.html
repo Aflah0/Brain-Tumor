@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Tumor Prediction</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('../static/brain.gif') no-repeat center center fixed; /* Set the background image */
+            background-size: cover; /* Ensure the background covers the whole page */
+            color: #585858;
+            padding: 40px 0;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        p {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+            color: #666;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        #fileInput {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 100%;
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 30px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            display: none;
+        }
+
+        #result.success {
+            color: #28a745;
+        }
+
+        #result.error {
+            color: #e74c3c;
+        }
+
+        #imagePreview {
+            margin-top: 20px;
+            max-width: 100%;
+            max-height: 300px;
+            display: none;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            object-fit: contain;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.9em;
+            margin-top: 40px;
+            color: #888;
+        }
+
+        .footer a {
+            text-decoration: none;
+            color: #4CAF50;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* College Info */
+        .college-info {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 1.1em;
+            color: #444;
+        }
+
+        .college-info h2 {
+            font-size: 2em;
+            color: #4CAF50;
+        }
+
+        .college-info img {
+            width: 100%; /* Make the image take full width */
+            height: auto; /* Maintain aspect ratio */
+            margin-top: 20px;
+            border-radius: 10px; /* Optional: Add rounded corners */
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); /* Optional: Add shadow to make it pop */
+        }
+
+        .acknowledgments {
+            margin-top: 30px;
+            font-size: 1.1em;
+            color: #444;
+            text-align: center;
+        }
+
+        .acknowledgments p {
+            margin-bottom: 10px;
+        }
+
+        /* Background shading for white */
+        .college-info {
+            background-color: rgba(255, 255, 255, 0.9); /* White background with slight opacity */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Brain Tumor Detection</h1>
+        <p>Upload an MRI image to detect the type of brain tumor.</p>
+        
+        <!-- File Input -->
+        <input type="file" id="fileInput" accept="image/*" onchange="previewImage()">
+        
+        <!-- Image Preview -->
+        <img id="imagePreview" src="" alt="Image Preview">
+
+        <!-- Prediction Button -->
+        <button onclick="uploadImage()">Detect</button>
+        
+        <!-- Prediction Result -->
+        <div id="result"></div>
+    </div>
+
+    <div class="acknowledgments">
+        <h2>Acknowledgments</h2>
+        <p>We would like to extend our heartfelt thanks to the following individuals:</p>
+        <p><strong>Team Members:</strong></p>
+        <ul>
+            <li>Mohammed Aflah</li>
+            <li>Minhaj Akavalappil</li>
+            <li>Mohammed Aseel</li>
+            <li>Mohammed Jasim.A</li>
+        </ul>
+
+        <p><strong>Special Thanks:</strong></p>
+        <ul>
+            <li>Principal: Dr. G. Ramesh</li>
+            <li>Head of Department: Dr. K. Najeeb</li>
+            <li>Head of Department(In-Charge): Mr. Anish Kumar B.</li>
+            <li>Project Guide: Ms. Najla Musthafa</li>
+            <li>Project Coordinator 1: Dr. Shanid Malayil</li>
+            <li>Project Coordinator 2: Mrs. Mubeena A K</li>
+        </ul>
+    </div>
+
+    <div class="college-info">
+        <h2>College</h2>
+        <p>MEA Engineering College</p>
+
+        <!-- College Banner -->
+        <img src="../static/MEAEC Banner.png" alt="College Banner">
+    </div>
+
+    <div class="footer">
+        <p>Developed by <a href="https://github.com/Aflah0" target="_blank">Mohammed Aflah</a></p>
+    </div>
+
+    <script>
+        // Function to preview the uploaded image
+        function previewImage() {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                var imagePreview = document.getElementById('imagePreview');
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';  // Show image preview
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);  // Convert image to base64 format
+            }
+        }
+
+        // Function to upload the image and get prediction
+        function uploadImage() {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            if (!file) {
+                alert("Please select an image file.");
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('file', file);
+
+            // Show loading message
+            var resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'none';
+            resultDiv.textContent = 'Processing...';
+            resultDiv.classList.remove('success', 'error');
+            resultDiv.style.display = 'block';
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    resultDiv.textContent = 'Prediction: ' + data.result;
+                    resultDiv.classList.add('success');
+                } else if (data.error) {
+                    resultDiv.textContent = 'Error: ' + data.error;
+                    resultDiv.classList.add('error');
+                }
+            })
+            .catch(error => {
+                resultDiv.textContent = 'Error: ' + error;
+                resultDiv.classList.add('error');
+            });
+        }
+    </script>
+
+</body>
+</html>
